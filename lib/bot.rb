@@ -139,12 +139,22 @@ class Bot
     # Move away from the enter zone ASAP
 
     # TODO: All the bomb logic
-   	# # Get my player from the game
-    # me = game.players[game.settings[:my_bot]]
 
+    # TODO Do it, if in range and closer to safety, do it
+
+    # TODO: Get them, slightly weight them so maybe pick them up
+
+    # TODO: Ticking!
+    # If in range of and ticking, if possible, move out of the way
+
+    # TODO? Defense? Never be further from safety than an opponent?
+   	
     # TODO: Weight bugs differently based on chase type
 
     # TODO, don't use gates when checking which way a bug will come
+
+    # # Get my player from the game
+    # me = game.players[game.settings[:my_bot]]
 
     # # Just return random move if no bombs
     # if (me.bombs <= 0) 
