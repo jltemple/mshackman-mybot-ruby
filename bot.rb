@@ -36,42 +36,59 @@ class Bot
     @graph.shortest_path(start_pos[ROW],start_pos[COL], end_pos[ROW], end_pos[COL])
   end
 
-  def closest_snippet_path()
-    snippet_paths = Array.new
+  def snippet_paths()
+    paths = Array.new
     my_pos = @field.positions[:me]
-    pp @field.positions[:snippets]
     @field.positions[:snippets].each do |snippet_pos|
-      snippet_paths << shortest_path(my_pos,snippet_pos)
+      paths << shortest_path(my_pos,snippet_pos)
     end
-    pp snippet_paths
+    return paths
+  end
+
+  def shortest_in_set(paths)
+    paths.min_by { |set| set.length }
+  end
+
+  def next_space_from_set(set)
+    return [set[-2].x,set[-2].y]
   end
 
 	def move(game)
 
-		# TODO: Get actual valid moves
 		valid_moves = game.field.valid_moves_for_me
 
-    closest_snippet_path()
-    
     # Pass when no valid moves
     if (valid_moves.size <= 0) 
-        return "pass"
+      return "pass"
     end
 
     random_move = valid_moves[Random.rand(valid_moves.size)]
 
-   	# Get my player from the game
-    me = game.players[game.settings[:my_bot]]
-
-    # Just return random move if no bombs
-    if (me.bombs <= 0) 
+    # No snippets, just jump around for now
+    if (@field.positions[:snippets].length <= 0)
       return random_move
     end
 
-    # Get random number of bomb ticks
-    ticks = Random.rand(4) + 2 # Random number from 2 to 5
+    possible_snippet_paths = snippet_paths()
+    path_to_closest_snippet = shortest_in_set(possible_snippet_paths)
+    to_snippet = next_space_from_set(path_to_closest_snippet)
+    move = @field.move_me_in_direction(to_snippet)
+    
+    return move    
 
-    return attack(random_move, ticks)
+    # TODO: All the bomb logic
+   	# # Get my player from the game
+    # me = game.players[game.settings[:my_bot]]
+
+    # # Just return random move if no bombs
+    # if (me.bombs <= 0) 
+    #   return random_move
+    # end
+
+    # # Get random number of bomb ticks
+    # ticks = Random.rand(4) + 2 # Random number from 2 to 5
+
+    # return attack(random_move, ticks)
 	end
 
 	def attack(direction, ticks)

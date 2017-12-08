@@ -147,5 +147,16 @@ class Field
     self.valid_moves(@positions[:me])
   end
 
+  def move_direction(start_pos, target_pos)
+    x = start_pos[ROW] - target_pos[ROW]
+    y = start_pos[COL] - target_pos[COL]
+    dir_string = DIRECTIONS.key([x,y])
+    return dir_string
+  end
+
+  def move_me_in_direction(target_pos)
+    move_direction(@positions[:me], target_pos)
+  end
+
 end
 

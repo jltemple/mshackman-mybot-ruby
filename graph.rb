@@ -57,16 +57,14 @@ class Graph
 			visited.add(current)
 			
 			if current == finish
-				path = Set.new
+				path = Array.new
 				while previous[current]
-					path.add(current)
+					path.push(current)
 					current = previous[current]
 				end
 
 				# The previous code would keep the g scores, reset
 				reset_grid()
-
-				# return "Path found"
 				# Why just print? Give me the path!
 				return path
 			end
