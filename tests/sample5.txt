@@ -84,3 +84,10 @@ update player0 bombs 0
 update player1 snippets 0
 update player1 bombs 0
 action move 100
+update game round 128
+update game field S,.,.,x,.,.,.,.,.,.,.,.,.,.,.,x,.,P1,S,.,x,.,x,.,x,x,x,x,.,x,x,x,x,.,x,.,x,E1,P0,x,.,.,.,x,.,.,.,.,.,.,.,x,.,.,.,x,.,.,x,x,x,.,x,.,x,x,x,x,x,.,x,.,x,x,x,.,.,x,.,.,.,x,.,.,.,.,.,.,.,x,.,.,.,x,.,E0,E2,.,x,.,x,.,x,x,.,x,x,.,x,.,x,.,.,.,x,.,x,x,.,.,.,x,x,.,x,x,.,.,.,x,x,.,x,Gl,.,x,x,.,x,x,x,x,.,x,x,x,x,.,x,x,.,Gr,x,.,x,x,.,.,.,.,.,.,.,.,.,.,.,x,x,B,x,.,.,.,x,.,x,x,x,x,x,x,x,x,x,.,x,.,.,.,.,x,.,.,.,.,.,.,x,x,x,.,.,.,.,.,.,x,.,.,x,.,x,x,.,x,.,.,.,C,.,x,.,x,x,.,x,.,.,x,.,x,x,.,x,x,x,x,x,x,x,.,x,x,C,x,.,.,x,.,x,x,.,x,.,.,.,.,.,x,.,x,x,.,x,.,S,.,.,C,.,.,.,.,x,x,x,.,.,B,.,.,.,.,S
+update player0 snippets 12
+update player0 bombs 0
+update player1 snippets 3
+update player1 bombs 0
+action move 10000

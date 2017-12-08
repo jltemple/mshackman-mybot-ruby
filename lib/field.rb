@@ -132,6 +132,9 @@ class Field
     check_cell = [start[ROW] + delta[ROW],
                   start[COL] + delta[COL]]
     begin
+      if check_cell[ROW] < 0 || check_cell[COL] < 0
+        return false # Ruby accepts negative indexes in arrays
+      end
       return @cells[check_cell[ROW]][check_cell[COL]] != S_BLOCKED
     rescue NoMethodError
       return false # This cell doesn't exist, so not a valid move
