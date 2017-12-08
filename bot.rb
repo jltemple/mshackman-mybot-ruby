@@ -74,6 +74,8 @@ class Bot
     to_snippet = next_space_from_set(path_to_closest_snippet)
     move = @field.move_me_in_direction(to_snippet)
     
+    # @graph.print_path(path_to_closest_snippet)
+
     return move    
 
     # TODO: All the bomb logic

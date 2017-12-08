@@ -56,6 +56,15 @@ class Field
     end
   end
 
+  def clear_array_positions
+    @positions = {
+      enemies: Array.new,
+      snippets: Array.new,
+      bombs: Array.new,
+      ticking_bombs: Array.new
+    }
+  end
+
   def clear_positions
     @positions = {
       me: nil,
@@ -75,6 +84,8 @@ class Field
 	end
 
 	def parse_from_string(input)
+    clear_array_positions()
+
     new_cells = input.split(",")
     x = 0
     y = 0
@@ -118,7 +129,11 @@ class Field
     delta = DIRECTIONS[move]
     check_cell = [start[ROW] + delta[ROW],
                   start[COL] + delta[COL]]
-    return @cells[check_cell[ROW]][check_cell[COL]] != S_BLOCKED
+    begin
+      return @cells[check_cell[ROW]][check_cell[COL]] != S_BLOCKED
+    rescue NoMethodError
+      return false # This cell doesn't exist, so not a valid move
+    end
   end
 
   def valid_move_for_me?(move)
@@ -148,8 +163,8 @@ class Field
   end
 
   def move_direction(start_pos, target_pos)
-    x = start_pos[ROW] - target_pos[ROW]
-    y = start_pos[COL] - target_pos[COL]
+    x = target_pos[ROW] - start_pos[ROW]
+    y = target_pos[COL] - start_pos[COL]
     dir_string = DIRECTIONS.key([x,y])
     return dir_string
   end
