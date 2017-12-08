@@ -165,8 +165,7 @@ class Field
   def move_direction(start_pos, target_pos)
     x = target_pos[ROW] - start_pos[ROW]
     y = target_pos[COL] - start_pos[COL]
-    dir_string = DIRECTIONS.key([x,y])
-    return dir_string
+    return DIRECTIONS.key([x,y])
   end
 
   def move_me_in_direction(target_pos)

@@ -2,7 +2,7 @@
 
 STDOUT.sync = true
 
-require_relative 'game'
+require_relative 'lib/game'
 
 game = Game.new("bixiette")
 
