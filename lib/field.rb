@@ -151,11 +151,9 @@ class Field
   end
 
   def valid_moves(start)
-    # Check if Gate
-    if start == @positions[:left_gate]
-      return ['left']
-    elsif start == @positions[:right_gate]
-      return ['right']
+    # Check if Gate, can go through or go back
+    if start == @positions[:left_gate] || start == @positions[:right_gate]
+      return ['left','right']
     end
 
     # Find valid list

@@ -9,14 +9,18 @@ require 'pp'
 class Bot
 
   ROW, COL = [0,1]
-  SNIPPET_REWARD = 2
-  ENEMY_REWARD = -4
-  EXPONENT_RAISE = 1.8
+  WEIGHTERS = {
+    snippet_reward: 1.5,
+    enemy_reward: -4.5,
+    snippet_exponent: 1.4,
+    enemy_exponent: 1.8
+  }
 
   def initialize(field)
     @graph = Graph.new(field.width,field.height)
     @field = field
     set_obstacles()
+    set_gates()
   end
 
   # Well I mean the graph is static so I can ei
@@ -28,6 +32,14 @@ class Bot
         end
       end
     end
+  end
+
+    # Well I mean the graph is static so I can ei
+  def set_gates
+    @graph.set_gates( @field.positions[:left_gate][ROW],
+                      @field.positions[:left_gate][COL],
+                      @field.positions[:right_gate][ROW],
+                      @field.positions[:right_gate][COL])
   end
 
   def test_graph()
@@ -64,19 +76,28 @@ class Bot
     return [path[-2].x,path[-2].y]
   end
 
-   def weight_path(path, reward)
+  def weight_path(path, reward, strength = WEIGHTERS[:snippet_exponent], method = :inverse_exponent)
     if (path.length == 0)
       return 0
     end
-    length_weight = 1.0 / (path.length**EXPONENT_RAISE)
+    case method
+    when :inverse_exponent
+      length_weight = 1.0 / (path.length**strength)
+    end
     return (reward * length_weight)
   end
 
-  def weight_all_paths(moves, paths, reward)
+  def weight_all_paths(moves, paths, reward, strength = WEIGHTERS[:snippet_exponent], method = :inverse_exponent)
     paths.each do |path|
       target = next_space_from_path(path)
-      direction = @field.move_me_in_direction(target)
-      weight = weight_path(path, reward)
+      if (@field.positions[:me] == @field.positions[:right_gate] && target == @field.positions[:left_gate])
+        direction = 'right'
+      elsif (@field.positions[:me] == @field.positions[:left_gate] && target == @field.positions[:right_gate])
+        direction = 'left'
+      else
+        direction = @field.move_me_in_direction(target)
+      end
+      weight = weight_path(path, reward, strength, method)
       moves[direction] = moves[direction] + weight
     end
   end
@@ -103,8 +124,9 @@ class Bot
     valid_moves.each {|direction| p_moves[direction] = 0}
 
     # Get weights of directions for snippets
-    weight_all_paths(p_moves, p_snippet_paths, SNIPPET_REWARD)
-    weight_all_paths(p_moves, p_enemy_paths, ENEMY_REWARD)
+    # weight_all_paths(p_moves, p_snippet_paths, SNIPPET_REWARD)
+    weight_all_paths(p_moves, p_snippet_paths, WEIGHTERS[:snippet_reward], WEIGHTERS[:snippet_exponent])
+    weight_all_paths(p_moves, p_enemy_paths, WEIGHTERS[:enemy_reward], WEIGHTERS[:enemy_exponent])
 
     move = greatest_move(p_moves)
     
@@ -112,9 +134,17 @@ class Bot
 
     return move    
 
+    # TODO: Danger zone!
+    # When snippets start to trigger a bug entering,
+    # Move away from the enter zone ASAP
+
     # TODO: All the bomb logic
    	# # Get my player from the game
     # me = game.players[game.settings[:my_bot]]
+
+    # TODO: Weight bugs differently based on chase type
+
+    # TODO, don't use gates when checking which way a bug will come
 
     # # Just return random move if no bombs
     # if (me.bombs <= 0) 

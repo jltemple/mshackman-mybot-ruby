@@ -8,6 +8,7 @@ class Graph
 		@height = height-1 # Last index in 0 based array
 		@width = width-1
 		@grid = []
+		@gates = {}
 		for y in 0..@height
 		  row = []
 		  for x in 0..@width
@@ -29,6 +30,17 @@ class Graph
   
 	def set_obstacle(x, y)
 		@grid[y][x].set_obstacle()
+	end
+
+	def set_gates(left_gate_x, left_gate_y, right_gate_x, right_gate_y)
+		@gates = {
+			left_gate_y: left_gate_y,
+			left_gate_x: left_gate_x,
+			right_gate_y: right_gate_y,
+			right_gate_x: right_gate_x
+		}
+		@grid[left_gate_y][left_gate_x].gate = 'left'
+		@grid[right_gate_y][right_gate_x].gate = 'right'
 	end
 	
 	def shortest_path(start_x, start_y, finish_x, finish_y)
@@ -64,6 +76,7 @@ class Graph
 				end
 
 				# The previous code would keep the g scores, reset
+				# print_path(path)
 				reset_grid()
 				# Why just print? Give me the path!
 				return path
@@ -71,25 +84,35 @@ class Graph
 			
 			# Examine all directions for the next path to take
 			for direction in 0..3
-				new_x = current.x + dx[direction]
-				new_y = current.y + dy[direction]
+
+				# If in a right gate and going right, jump to left gate
+				if current.gate == 'right' && direction == 0
+					new_x = @gates[:left_gate_x]
+					new_y = @gates[:left_gate_y]
+				# If in a left gate and going left, jump to right gate	
+				elsif current.gate == 'left' && direction == 2
+					new_x = @gates[:right_gate_x]
+					new_y = @gates[:right_gate_y]
+				# Not jumping through a gate, walk like a normal bot
+				else
+					new_x = current.x + dx[direction]
+					new_y = current.y + dy[direction]				
+				end
 				
 				if new_x < 0 or new_x > @width or new_y < 0 or new_y > @height #Check for out of bounds
 					next # Try next configuration
 				end
 				
 				neighbor = @grid[new_y][new_x]
+
+
 				
 				# Check if we've been to a node or if it is an obstacle
 				if visited.include? neighbor or f_score.has_key? neighbor or neighbor.obstacle
 					next
 				end
 				
-				if direction % 2 == 1
-					tentative_g_score = current.g_score + 14 # traveled so far + distance to next node diagonal
-				else
-					tentative_g_score = current.g_score + 10 # traveled so far + distance to next node vertical or horizontal
-				end
+				tentative_g_score = current.g_score + 10 # traveled so far + distance to next node vertical or horizontal
 				
 				# If there is a new shortest path update our priority queue (relax)
 				if tentative_g_score < neighbor.g_score
