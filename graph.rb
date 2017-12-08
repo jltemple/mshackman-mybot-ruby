@@ -16,6 +16,16 @@ class Graph
 		  @grid.push(row)
 		end
 	end
+
+	def reset_grid
+		for y in 0..@height
+			for x in 0..@width
+				if !@grid[y][x].obstacle
+					@grid[y][x].set_g_score(Float::INFINITY)
+				end
+			end
+		end
+	end
   
 	def set_obstacle(x, y)
 		@grid[y][x].set_obstacle()
@@ -52,6 +62,9 @@ class Graph
 					path.add(current)
 					current = previous[current]
 				end
+
+				# The previous code would keep the g scores, reset
+				reset_grid()
 
 				# return "Path found"
 				# Why just print? Give me the path!
