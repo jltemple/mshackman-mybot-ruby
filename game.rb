@@ -18,6 +18,9 @@ class Game
   }
 
   def initialize(character)
+    @bot = nil
+    @field = nil
+
     @settings = {
       initial_timebank: 0,
       time_per_move: 10,
@@ -30,7 +33,6 @@ class Game
       character: character
     }
 
-    @field = nil
     @round = 0
     @last_update = 0
     @last_timebank = 0
@@ -68,8 +70,11 @@ class Game
         if @field.nil?
           @field = Field.new(@settings[:field_width], @settings[:field_height])
           @field.set_player_string(@settings[:my_botid])
+          @field.parse_from_string(value)
+          @bot = Bot.new(@field)
+        else
+          @field.parse_from_string(value)
         end
-        @field.parse_from_string(value)
       end # End cases for "game"
 
     when *@settings[:player_names]
@@ -87,7 +92,7 @@ class Game
     when "character"
       puts @settings[:character]
     when "move"
-      puts Bot.move(self)
+      puts @bot.move(self)
     end
   end
 

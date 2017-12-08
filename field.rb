@@ -4,7 +4,9 @@
 #
 
 class Field
-  S_EMPTY, S_BLOCKED, S_PLAYER, S_BUG_SPAWN, S_GATE, S_BUG, S_BOMB, S_CODE = ['.', 'x', 'P', 'S', 'G', 'E', 'B', 'C']
+  attr_reader :cells, :positions, :width, :height
+
+  S_EMPTY, S_BLOCKED, S_PLAYER, S_BUG_SPAWN, S_GATE, S_BUG, S_BOMB, S_SNIPPET = ['.', 'x', 'P', 'S', 'G', 'E', 'B', 'C']
 
   DIRECTIONS = {
     "up" => [0,-1],
@@ -90,6 +92,8 @@ class Field
           else
             @positions[:opponent] = [x,y]
           end
+        when S_SNIPPET
+          @positions[:snippets] << [x,y]
         when S_GATE
           if @positions[:left_gate].nil? || @positions[:right_gate].nil?
             if cellPart.eql? @strings[:left_gate]
