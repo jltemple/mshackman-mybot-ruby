@@ -10,6 +10,8 @@ class Bot
 
   ROW, COL = [0,1]
   SNIPPET_REWARD = 2
+  ENEMY_REWARD = -4
+  EXPONENT_RAISE = 1.8
 
   def initialize(field)
     @graph = Graph.new(field.width,field.height)
@@ -45,6 +47,15 @@ class Bot
     return paths
   end
 
+  def enemy_paths()
+    paths = Array.new
+    my_pos = @field.positions[:me]
+    @field.positions[:enemies].each do |snippet_pos|
+      paths << shortest_path(my_pos,snippet_pos)
+    end
+    return paths
+  end
+
   def shortest_in_set(paths)
     paths.min_by { |set| set.length }
   end
@@ -57,7 +68,7 @@ class Bot
     if (path.length == 0)
       return 0
     end
-    length_weight = (1.0 / path.length)
+    length_weight = 1.0 / (path.length**EXPONENT_RAISE)
     return (reward * length_weight)
   end
 
@@ -85,6 +96,7 @@ class Bot
     end
 
     p_snippet_paths = snippet_paths()
+    p_enemy_paths = enemy_paths()
 
     # Create a Hash of the directions that the bot can go
     p_moves = Hash.new
@@ -92,6 +104,7 @@ class Bot
 
     # Get weights of directions for snippets
     weight_all_paths(p_moves, p_snippet_paths, SNIPPET_REWARD)
+    weight_all_paths(p_moves, p_enemy_paths, ENEMY_REWARD)
 
     move = greatest_move(p_moves)
     

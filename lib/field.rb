@@ -105,6 +105,8 @@ class Field
           end
         when S_SNIPPET
           @positions[:snippets] << [x,y]
+        when S_BUG
+          @positions[:enemies] << [x,y]
         when S_GATE
           if @positions[:left_gate].nil? || @positions[:right_gate].nil?
             if cellPart.eql? @strings[:left_gate]
