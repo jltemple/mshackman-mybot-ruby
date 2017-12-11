@@ -43,7 +43,7 @@ class Graph
 		@grid[right_gate_y][right_gate_x].gate = 'right'
 	end
 	
-	def shortest_path(start_x, start_y, finish_x, finish_y)
+	def shortest_path(start_x, start_y, finish_x, finish_y, with_gates = true)
 
 		def heuristic(current, target)
 			return [(current.x - target.x).abs, (current.y - target.y).abs].max
@@ -85,18 +85,23 @@ class Graph
 			# Examine all directions for the next path to take
 			for direction in 0..3
 
-				# If in a right gate and going right, jump to left gate
-				if current.gate == 'right' && direction == 0
-					new_x = @gates[:left_gate_x]
-					new_y = @gates[:left_gate_y]
-				# If in a left gate and going left, jump to right gate	
-				elsif current.gate == 'left' && direction == 2
-					new_x = @gates[:right_gate_x]
-					new_y = @gates[:right_gate_y]
-				# Not jumping through a gate, walk like a normal bot
+				if with_gates
+					# If in a right gate and going right, jump to left gate
+					if current.gate == 'right' && direction == 0
+						new_x = @gates[:left_gate_x]
+						new_y = @gates[:left_gate_y]
+					# If in a left gate and going left, jump to right gate	
+					elsif current.gate == 'left' && direction == 2
+						new_x = @gates[:right_gate_x]
+						new_y = @gates[:right_gate_y]
+					# Not jumping through a gate, walk like a normal bot
+					else
+						new_x = current.x + dx[direction]
+						new_y = current.y + dy[direction]				
+					end
 				else
 					new_x = current.x + dx[direction]
-					new_y = current.y + dy[direction]				
+						new_y = current.y + dy[direction]
 				end
 				
 				if new_x < 0 or new_x > @width or new_y < 0 or new_y > @height #Check for out of bounds

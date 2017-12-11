@@ -45,7 +45,7 @@ class Bot
     pp @graph.shortest_path(0,2,6,3)
   end
 
-  def shortest_path(start_pos, end_pos)
+  def shortest_path(start_pos, end_pos, with_gates = true)
     @graph.shortest_path(start_pos[ROW],start_pos[COL], end_pos[ROW], end_pos[COL])
   end
 
@@ -65,10 +65,10 @@ class Bot
       case @field.type_bug(enemy_pos)
       when :predict
         # Ignore the predict bug unless he's on top of player
-        predict_path = shortest_path(my_pos,enemy_pos)
+        predict_path = shortest_path(my_pos,enemy_pos, false)
         paths << predict_path if predict_path.length <= 5
       else
-        paths << shortest_path(my_pos,enemy_pos)
+        paths << shortest_path(my_pos,enemy_pos, false)
       end
     end
     return paths
@@ -179,8 +179,6 @@ class Bot
     # TODO: ADDITIONAL BUG LOGIC
     #
     # TODO: Weight bugs differently based on chase type
-    #
-    # TODO: Don't use gate paths when checking which way a bug will come
     #
 
     # TODO: HAIL MARY
