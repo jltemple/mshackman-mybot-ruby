@@ -106,6 +106,10 @@ class Bot
     return moves.max_by{|direction,weight| weight}[0]
   end
 
+  def attack(direction, ticks)
+    return direction << ";drop_bomb " << ticks.to_s
+  end
+
 	def move(game)
 
     valid_moves = game.field.valid_moves_for_me
@@ -134,41 +138,59 @@ class Bot
 
     return move    
 
+    #
     # TODO: Danger zone!
-    # When snippets start to trigger a bug entering,
-    # Move away from the enter zone ASAP
+    #
+    # If snippets just hit 4
+    #   Treat correct corner as if there's a bug there, avoid corners
+    #
 
-    # TODO: All the bomb logic
-
-    # TODO Do it, if in range and closer to safety, do it
-
+    #
+    # TODO: ALL BOMB LOGIC 
+    #
     # TODO: Get them, slightly weight them so maybe pick them up
-
+    #
     # TODO: Ticking!
-    # If in range of and ticking, if possible, move out of the way
+    # If in column and row of ticking mine
+    #   If distance_from_safety <= ticks
+    #     Escape!
+    #   Else doesn't matter, getting hit anyway, continue like normal
+    #
+    # TODO- Defense
+   	#  If my snippets >= 5 
+    #    If opponent and I are in same row or column AND theres no wall between us
+    #      If opponent_distance_from_safety > 2
+    #        If opponent_snippets < 5
+    #          Drop for (opponent_distance_from_safety - 1)
+    #        If opponent_distance_from_safety > distance_from_safety
+    #          Drop (opponent_distance_from_safety - 1), escape to safety (distance_from_safety)!
+    #  Elsif my_snippets < 5 & opponents_snippts >=5 )
+    #    If opponent_distance_from_safety > distance_from_safety    
+    #      Escape!
+    #
 
-    # TODO? Defense? Never be further from safety than an opponent?
-   	
+    #
+    # TODO: ADDITIONAL BUG LOGIC
+    #
     # TODO: Weight bugs differently based on chase type
+    #
+    # TODO: Ignore green bugs? 
+    #   Unless they're literally the space behind me, don't turn around and walk into them
+    #
+    # TODO: Don't use gate paths when checking which way a bug will come
+    #
 
-    # TODO, don't use gates when checking which way a bug will come
+    # TODO: HAIL MARY
+    # Hail Mary play, if the opponent is winning and the game is about to wrap up,
+    # Let a mine hit us both and hope I can gather up more of their dropped snippets
+    #
+    # If game round is 220 or 230
+    #   If my_snippets >= 5 and opponent_snippets > my_snippets
+    #     If opponent and I are in same row or column AND theres no wall between us
+    #       If opponent_distance_from_safety > 2
+    #         If opponent_snippets < 5
+    #           Drop for (opponent_distance_from_safety - 1)    
 
-    # # Get my player from the game
-    # me = game.players[game.settings[:my_bot]]
-
-    # # Just return random move if no bombs
-    # if (me.bombs <= 0) 
-    #   return random_move
-    # end
-
-    # # Get random number of bomb ticks
-    # ticks = Random.rand(4) + 2 # Random number from 2 to 5
-
-    # return attack(random_move, ticks)
-	end
-
-	def attack(direction, ticks)
-		return direction << ";drop_bomb " << ticks.to_s
 	end
 
 end
