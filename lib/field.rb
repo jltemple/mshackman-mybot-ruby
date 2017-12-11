@@ -15,6 +15,13 @@ class Field
     "right" => [1,0]
   }
 
+  BUG_TYPES = {
+    chase: 'E0',
+    predict: 'E1',
+    lever: 'E2',
+    far_chase: 'E3'
+  }
+
   ROW, COL = [0,1]
 
   def initialize(width, height)
@@ -90,15 +97,15 @@ class Field
     x = 0
     y = 0
 
-    new_cells.each do |cellString| 
-      @cells[x][y] = cellString
+    new_cells.each do |cell_string| 
+      @cells[x][y] = cell_string
 
-      cellParts = cellString.split(";")
+      cell_parts = cell_string.split(";")
 
-      cellParts.each do |cellPart|
-        case cellPart[0]
+      cell_parts.each do |cell_part|
+        case cell_part[0]
         when S_PLAYER
-          if cellPart.eql? @strings[:me]
+          if cell_part.eql? @strings[:me]
             @positions[:me] = [x,y]
           else
             @positions[:opponent] = [x,y]
@@ -109,14 +116,14 @@ class Field
           @positions[:enemies] << [x,y]
         when S_GATE
           if @positions[:left_gate].nil? || @positions[:right_gate].nil?
-            if cellPart.eql? @strings[:left_gate]
+            if cell_part.eql? @strings[:left_gate]
               @positions[:left_gate] = [x,y]
-            elsif cellPart.eql? @strings[:right_gate]
+            elsif cell_part.eql? @strings[:right_gate]
               @positions[:right_gate] = [x,y]
             end
           end
         end
-      end # End looping through cellParts
+      end # End looping through cell_parts
 
       # Increment to next cell
       x += 1
@@ -124,7 +131,7 @@ class Field
         x = 0
         y += 1
       end
-    end # End looping through cellString
+    end # End looping through cell_string
   end
 
   def valid_move?(start,move)
@@ -178,6 +185,16 @@ class Field
 
   def move_me_in_direction(target_pos)
     move_direction(@positions[:me], target_pos)
+  end
+
+  def type_bug(bug_pos)
+    bug_string = @cells[bug_pos[ROW]][bug_pos[COL]]
+    bug_cell_parts = bug_string.split(";")
+    bug_cell_parts.each do |cell_part|
+      if cell_part[0] == 'E'
+        return BUG_TYPES.key(cell_part)
+      end
+    end
   end
 
 end

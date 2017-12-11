@@ -34,7 +34,6 @@ class Bot
     end
   end
 
-    # Well I mean the graph is static so I can ei
   def set_gates
     @graph.set_gates( @field.positions[:left_gate][ROW],
                       @field.positions[:left_gate][COL],
@@ -62,8 +61,15 @@ class Bot
   def enemy_paths()
     paths = Array.new
     my_pos = @field.positions[:me]
-    @field.positions[:enemies].each do |snippet_pos|
-      paths << shortest_path(my_pos,snippet_pos)
+    @field.positions[:enemies].each do |enemy_pos|
+      case @field.type_bug(enemy_pos)
+      when :predict
+        # Ignore the predict bug unless he's on top of player
+        predict_path = shortest_path(my_pos,enemy_pos)
+        paths << predict_path if predict_path.length <= 5
+      else
+        paths << shortest_path(my_pos,enemy_pos)
+      end
     end
     return paths
   end
@@ -173,9 +179,6 @@ class Bot
     # TODO: ADDITIONAL BUG LOGIC
     #
     # TODO: Weight bugs differently based on chase type
-    #
-    # TODO: Ignore green bugs? 
-    #   Unless they're literally the space behind me, don't turn around and walk into them
     #
     # TODO: Don't use gate paths when checking which way a bug will come
     #

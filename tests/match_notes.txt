@@ -1,0 +1,20 @@
+MATCH NOTES
+
+deedle_bot v17 vs jos_bot v20 
+- Didn't grab a mine literally right next to me
+- Test with rounds 77 - 81
+- Avoided green bug, so got stuck between 3
+- Test with roungs 155 - 159
+
+Before Fix:			After fix:
+					right
+					right
+					right
+					down
+					right
+					right
+					right
+
+
+jos_bot v20 VS Sac_bot v178
+- Draw, avoiding green bugs may have affected
