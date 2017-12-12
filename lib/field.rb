@@ -32,6 +32,7 @@ class Field
     @positions = {
       me: nil,
       opponent: nil,
+      spawn: nil,
       enemies: Array.new,
       snippets: Array.new,
       bombs: Array.new,
@@ -64,18 +65,22 @@ class Field
   end
 
   def clear_array_positions
-    @positions = {
-      enemies: Array.new,
-      snippets: Array.new,
-      bombs: Array.new,
-      ticking_bombs: Array.new
-    }
+    @positions[:enemies] = Array.new
+    @positions[:snippets] = Array.new
+    @positions[:bombs] = Array.new
+    @positions[:ticking_bombs] = Array.new
+  end
+
+  def clear_for_new_turn
+    clear_array_positions()
+    @positions[:spawn] = nil # There isn't always a spawn, this needs to reset
   end
 
   def clear_positions
     @positions = {
       me: nil,
       opponent: nil,
+      spawn: nil,
       enemies: Array.new,
       snippets: Array.new,
       bombs: Array.new,
@@ -87,11 +92,11 @@ class Field
 
   def clear_field
     self.clear_field_cells()
-    self.positions()    
+    self.clear_positions()    
 	end
 
 	def parse_from_string(input)
-    clear_array_positions()
+    clear_for_new_turn()
 
     new_cells = input.split(",")
     x = 0
@@ -114,6 +119,19 @@ class Field
           @positions[:snippets] << [x,y]
         when S_BUG
           @positions[:enemies] << [x,y]
+        when S_BOMB
+          # If there's a tick count (second character), it's ticking
+          # Otherwise it's to pick up
+          if cell_part.length == 1
+            @positions[:bombs] << [x,y]
+          else
+            @positions[:ticking_bombs] << [x,y]
+          end
+        when S_BUG_SPAWN
+          # If there's a swawn count (second character), it's about to spawn
+          if cell_part.length > 1
+            @positions[:spawn] = [x,y]
+          end
         when S_GATE
           if @positions[:left_gate].nil? || @positions[:right_gate].nil?
             if cell_part.eql? @strings[:left_gate]

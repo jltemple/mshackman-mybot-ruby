@@ -9,11 +9,22 @@ require 'pp'
 class Bot
 
   ROW, COL = [0,1]
+
+  # WEIGHTERS EXPLANATION
+  # Snippets: Snippets are all over, and the goal, they should level out slower- the more in a direction, the more we want to go there
+  # Bugs:     Bugs are dangerous, try to stay from every getting close, they should always persuade the direction
+  # Bombs:    For now, mines are just a nice surprise, if ones around, grab it, but don't change course on the other side of the field
+  # Spawns:   They are dangerous if they're close, when we're 1 to 4 spaces away from it, weight it way more than a bug- no surprises! 
+  #             Then if we're further from it, treat it less than a bug, a bug will soon come.
   WEIGHTERS = {
-    snippet_reward: 1.5,
-    enemy_reward: -4.5,
-    snippet_exponent: 1.4,
-    enemy_exponent: 1.8
+    snippet_reward: 2,
+    enemy_reward: -5,
+    bomb_reward: 2,
+    spawn_reward: -7,
+    snippet_exponent: 1.6,
+    enemy_exponent: 1.6,
+    bomb_exponent: 2,
+    spawn_exponent: 1.8
   }
 
   def initialize(field)
@@ -49,27 +60,41 @@ class Bot
     @graph.shortest_path(start_pos[ROW],start_pos[COL], end_pos[ROW], end_pos[COL])
   end
 
-  def snippet_paths()
+  def snippet_paths(my_pos)
     paths = Array.new
-    my_pos = @field.positions[:me]
     @field.positions[:snippets].each do |snippet_pos|
       paths << shortest_path(my_pos,snippet_pos)
     end
     return paths
   end
 
-  def enemy_paths()
+  def enemy_paths(my_pos)
     paths = Array.new
-    my_pos = @field.positions[:me]
     @field.positions[:enemies].each do |enemy_pos|
       case @field.type_bug(enemy_pos)
       when :predict
         # Ignore the predict bug unless he's on top of player
         predict_path = shortest_path(my_pos,enemy_pos, false)
-        paths << predict_path if predict_path.length <= 5
+        paths << predict_path if predict_path.length < 8
       else
         paths << shortest_path(my_pos,enemy_pos, false)
       end
+    end
+    return paths
+  end
+
+  def bomb_paths(my_pos)
+    paths = Array.new
+    @field.positions[:bombs].each do |bomb_pos|
+      paths << shortest_path(my_pos,bomb_pos)
+    end
+    return paths
+  end
+
+  def spawn_paths(my_pos)
+    paths = Array.new # Even though it's one path, later methods want an array
+    if !@field.positions[:spawn].nil?
+      paths << shortest_path(my_pos,@field.positions[:spawn])
     end
     return paths
   end
@@ -94,6 +119,9 @@ class Bot
   end
 
   def weight_all_paths(moves, paths, reward, strength = WEIGHTERS[:snippet_exponent], method = :inverse_exponent)
+    if (paths.length == 0)
+      return 0
+    end
     paths.each do |path|
       target = next_space_from_path(path)
       if (@field.positions[:me] == @field.positions[:right_gate] && target == @field.positions[:left_gate])
@@ -126,8 +154,12 @@ class Bot
       return random_move
     end
 
-    p_snippet_paths = snippet_paths()
-    p_enemy_paths = enemy_paths()
+    my_pos = @field.positions[:me]
+
+    p_snippet_paths = snippet_paths(my_pos)
+    p_enemy_paths = enemy_paths(my_pos)
+    p_bomb_paths = bomb_paths(my_pos)
+    p_spawn_paths = spawn_paths(my_pos)
 
     # Create a Hash of the directions that the bot can go
     p_moves = Hash.new
@@ -137,6 +169,9 @@ class Bot
     # weight_all_paths(p_moves, p_snippet_paths, SNIPPET_REWARD)
     weight_all_paths(p_moves, p_snippet_paths, WEIGHTERS[:snippet_reward], WEIGHTERS[:snippet_exponent])
     weight_all_paths(p_moves, p_enemy_paths, WEIGHTERS[:enemy_reward], WEIGHTERS[:enemy_exponent])
+    weight_all_paths(p_moves, p_bomb_paths, WEIGHTERS[:bomb_reward], WEIGHTERS[:bomb_exponent])
+    weight_all_paths(p_moves, p_spawn_paths, WEIGHTERS[:spawn_reward], WEIGHTERS[:spawn_exponent])
+
 
     move = greatest_move(p_moves)
     
@@ -145,16 +180,7 @@ class Bot
     return move    
 
     #
-    # TODO: Danger zone!
-    #
-    # If snippets just hit 4
-    #   Treat correct corner as if there's a bug there, avoid corners
-    #
-
-    #
     # TODO: ALL BOMB LOGIC 
-    #
-    # TODO: Get them, slightly weight them so maybe pick them up
     #
     # TODO: Ticking!
     # If in column and row of ticking mine
