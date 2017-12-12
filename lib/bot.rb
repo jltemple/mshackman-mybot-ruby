@@ -102,7 +102,7 @@ class Bot
   end
 
   def weight_path(path, reward, strength = WEIGHTERS[:snippet_exponent], method = :inverse_exponent)
-    if (path.length == 0)
+    if path.length == 0
       return 0
     end
     case method
@@ -113,10 +113,11 @@ class Bot
   end
 
   def weight_all_paths(moves, paths, reward, strength = WEIGHTERS[:snippet_exponent], method = :inverse_exponent)
-    if (paths.length == 0)
+    if paths.length == 0
       return 0
     end
-    paths.each do |path|
+    paths.each do |path| 
+      next if path.length <= 1 # Skip if this path is just the space I'm standing on
       target = next_space_from_path(path)
       if (@field.positions[:me] == @field.positions[:right_gate] && target == @field.positions[:left_gate])
         direction = 'right'
