@@ -11,6 +11,7 @@ class Bot
   ROW, COL = [0,1]
 
   # WEIGHTERS EXPLANATION
+  # Graphs of weights: http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIyKjEvKHheMS42KSIsImNvbG9yIjoiIzQ0QjM1RSJ9LHsidHlwZSI6MCwiZXEiOiI1KjEvKHheMS42KSIsImNvbG9yIjoiI0JBMUUxRSJ9LHsidHlwZSI6MCwiZXEiOiIyLyh4XjIpIiwiY29sb3IiOiIjOTlCOUZGIn0seyJ0eXBlIjowLCJlcSI6IjcqMS8oeF4xLjgpIiwiY29sb3IiOiIjRkYwMEY3In0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTcuMTE5OTk5OTk5OTk5OTk4IiwiNS44ODAwMDAwMDAwMDAwMDIiLCItMS42OTk5OTk5OTk5OTk5OTQiLCI2LjMwMDAwMDAwMDAwMDAwNCJdfV0-
   # Snippets: Snippets are all over, and the goal, they should level out slower- the more in a direction, the more we want to go there
   # Bugs:     Bugs are dangerous, try to stay from every getting close, they should always persuade the direction
   # Bombs:    For now, mines are just a nice surprise, if ones around, grab it, but don't change course on the other side of the field
