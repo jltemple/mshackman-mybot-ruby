@@ -27,6 +27,7 @@ class Game
       player_names: [],
       my_bot: nil,
       my_botid: -1,
+      opponent_bot: nil,
       field_width: 0,
       field_height: 0,
       max_rounds: 0,
@@ -50,6 +51,11 @@ class Game
         first_name => Player.new(first_name),
         second_name => Player.new(second_name)
       }
+      if first_name == @settings[:my_bot]
+        @settings[:opponent_bot] = second_name
+      else
+        @settings[:opponent_bot] = first_name
+      end
     when "your_bot" 
       # Set any string values
       @settings[SETTINGS_MAPPINGS[command]] = value
@@ -57,6 +63,14 @@ class Game
       # Cast and set any integer values
       @settings[SETTINGS_MAPPINGS[command]] = value.to_i
     end # Ending setting the setting
+  end
+
+  def me
+    return @players[@settings[:my_bot]]
+  end
+
+  def opponent
+    return @players[@settings[:opponent_bot]]
   end
 
   def update(target, command, value)

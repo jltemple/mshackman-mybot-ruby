@@ -19,11 +19,11 @@ class Bot
   #             Then if we're further from it, treat it less than a bug, a bug will soon come.
   WEIGHTERS = {
     snippet_reward: 2,
-    enemy_reward: -5,
+    enemy_reward: -4.5,
     bomb_reward: 2,
     spawn_reward: -7,
-    snippet_exponent: 1.6,
-    enemy_exponent: 1.6,
+    snippet_exponent: 1.4,
+    enemy_exponent: 1.8,
     bomb_exponent: 2,
     spawn_exponent: 1.8
   }
@@ -72,14 +72,7 @@ class Bot
   def enemy_paths(my_pos)
     paths = Array.new
     @field.positions[:enemies].each do |enemy_pos|
-      case @field.type_bug(enemy_pos)
-      when :predict
-        # Ignore the predict bug unless he's on top of player
-        predict_path = shortest_path(my_pos,enemy_pos, false)
-        paths << predict_path if predict_path.length < 8
-      else
-        paths << shortest_path(my_pos,enemy_pos, false)
-      end
+      paths << shortest_path(my_pos,enemy_pos, false)
     end
     return paths
   end
@@ -137,6 +130,22 @@ class Bot
     end
   end
 
+  def offense(game)
+    me = game.me
+    opponent = game.opponent
+    if me.snippets >= 5
+      # If opponent and I are in same row or column AND theres no wall between us
+      #   If opponent_distance_from_safety > 2
+      #     If opponent_snippets < 5
+      #       Drop for (opponent_distance_from_safety - 1)
+      #     If opponent_distance_from_safety > distance_from_safety
+      #       Drop (opponent_distance_from_safety - 1), escape to safety (distance_from_safety)!
+    elsif me.snippets < 5 && opponent.snippets >= 5 
+      # If opponent_distance_from_safety > distance_from_safety    
+      #   Escape!
+    end
+  end
+
   def greatest_move(moves)
     return moves.max_by{|direction,weight| weight}[0]
   end
@@ -173,6 +182,8 @@ class Bot
     weight_all_paths(p_moves, p_bomb_paths, WEIGHTERS[:bomb_reward], WEIGHTERS[:bomb_exponent])
     weight_all_paths(p_moves, p_spawn_paths, WEIGHTERS[:spawn_reward], WEIGHTERS[:spawn_exponent])
 
+    offense(game)
+
 
     move = greatest_move(p_moves)
     
@@ -190,16 +201,6 @@ class Bot
     #   Else doesn't matter, getting hit anyway, continue like normal
     #
     # TODO- Defense
-   	#  If my snippets >= 5 
-    #    If opponent and I are in same row or column AND theres no wall between us
-    #      If opponent_distance_from_safety > 2
-    #        If opponent_snippets < 5
-    #          Drop for (opponent_distance_from_safety - 1)
-    #        If opponent_distance_from_safety > distance_from_safety
-    #          Drop (opponent_distance_from_safety - 1), escape to safety (distance_from_safety)!
-    #  Elsif my_snippets < 5 & opponents_snippts >=5 )
-    #    If opponent_distance_from_safety > distance_from_safety    
-    #      Escape!
     #
 
     #
