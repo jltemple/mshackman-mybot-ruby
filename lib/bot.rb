@@ -22,8 +22,8 @@ class Bot
     enemy_reward: -4.5,
     bomb_reward: 2,
     spawn_reward: -7,
-    snippet_exponent: 1.4,
-    enemy_exponent: 1.8,
+    snippet_exponent: 1.5,
+    enemy_exponent: 1.6,
     bomb_exponent: 2,
     spawn_exponent: 1.8
   }
@@ -187,6 +187,8 @@ class Bot
 
 
     move = greatest_move(p_moves)
+
+    puts p_moves if move == 'right'
     
     # @graph.print_path(path_to_closest_snippet)
 
