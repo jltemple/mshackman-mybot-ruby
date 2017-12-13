@@ -187,8 +187,6 @@ class Bot
 
 
     move = greatest_move(p_moves)
-
-    puts p_moves if move == 'right'
     
     # @graph.print_path(path_to_closest_snippet)
 
